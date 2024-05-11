@@ -1,0 +1,6 @@
+polars
+dagster==1.7.4
+dagster-webserver
+dagster-mlflow
+mlflow
+ruff
