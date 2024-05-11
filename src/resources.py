@@ -42,13 +42,5 @@ class MlflowExperimentConfig(ConfigurableResource):
     extra_tags: dict = Field(default={})
 
 
-@resource(config_schema={"use_mlflow": bool})
-def optional_mlflow(context: InitResourceContext) -> MlFlow | None:
-    if context.resource_config["use_mlflow"]:
-        return context.resources.mlflow
-    else:
-        return None
-
-
 class OptMlflow(ConfigurableResource):
     use_mlflow: bool = Field(default=False)
