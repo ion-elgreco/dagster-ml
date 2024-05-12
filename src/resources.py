@@ -36,7 +36,7 @@ class ParamSearchSpace(PermissiveConfig, ConfigurableResource):
 
 
 class MlflowExperimentConfig(ConfigurableResource):
-    """Config for ML model."""
+    """Config for MLFlow experiment."""
 
     experiment_name: str
     mlflow_tracking_uri: str = Field(default="http://localhost:5000")
