@@ -4,3 +4,5 @@ dagster-webserver
 dagster-mlflow
 mlflow
 ruff
+pip
+ipykernel

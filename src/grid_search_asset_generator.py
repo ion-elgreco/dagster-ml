@@ -24,8 +24,8 @@ def generate_grid_search_asset(job_name: str) -> AssetsDefinition:
         submitted_jobs = []
         for combination in model_config_combinations:
             mlflow_config = mlflow_experiment_config.model_dump()
+            mlflow_config["use_mlflow"] = True
             combination["mlflow"] = {"config": mlflow_config}
-            combination["opt_mlflow"] = {"config": {"use_mlflow": True}}
             run_config = {"resources": combination}
             submitted_jobs.append(
                 client.submit_job_execution(job_name, run_config=run_config)
