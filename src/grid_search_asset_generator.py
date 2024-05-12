@@ -110,9 +110,8 @@ def generate_optuna_search_asset(job_name: str) -> AssetsDefinition:
             context.log.info("Submitted dagster jobs: %s", submitted_job)
             return random.random()
         
-        
-        
-        study = optuna.create_study(direction="maximize")
+    
+        study = optuna.create_study()
         study.optimize(objective, n_trials=optuna_config.n_trials, n_jobs=optuna_config.n_jobs, show_progress_bar=True)
         
     return fortuna_search_asset
