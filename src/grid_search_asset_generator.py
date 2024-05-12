@@ -88,9 +88,9 @@ def generate_optuna_search_asset(job_name: str) -> AssetsDefinition:
                 for param, param_def in params_def.items():
                     model_param_log = f"{model_config}__{param}"
                     if isinstance(param_def, list):
-                        trial.suggest_categorical(model_param_log, param_def)
+                        resources_config[model_config]['config'][param] = trial.suggest_categorical(model_param_log, param_def)
                     elif isinstance(param_def['low'], int) and isinstance(param_def['high'], int):
-                        trial.suggest_int(
+                        resources_config[model_config]['config'][param] = trial.suggest_int(
                             model_param_log,
                             low=param_def['low'],
                             high=param_def['high'],
@@ -98,7 +98,7 @@ def generate_optuna_search_asset(job_name: str) -> AssetsDefinition:
                             log=param_def.get('log', False)
                         )
                     elif isinstance(param_def['low'], float) and isinstance(param_def['high'], float):
-                        trial.suggest_float(
+                        resources_config[model_config]['config'][param] = trial.suggest_float(
                             model_param_log,
                             low=param_def['low'],
                             high=param_def['high'],
