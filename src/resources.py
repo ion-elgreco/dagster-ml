@@ -17,11 +17,13 @@ class ModelConfig(ConfigurableResource):
 
 
 class ParamSearchSpace(PermissiveConfig, ConfigurableResource):
-    """Provide params in a list per ModelConfig.
+    """Provide params in a list per ModelConfig. Pass this dict to
+    resources: {"param_search_space": ParamSearchSpace()} in defintions object, and
+    below there is an example of how you configure the resource in launchpad.
 
     Example:
-        ParamSearchSpace:
-            Config:
+        param_search_space:
+            config:
                 model_1_config:
                     param_a: [1,2,3,4]
                     param_b: [10,20]
