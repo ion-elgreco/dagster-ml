@@ -1,5 +1,6 @@
 from dagster import asset, AssetExecutionContext
 from src.resources import ModelConfig, ConfigurableMlflow
+import random
 
 
 @asset(
@@ -13,5 +14,6 @@ def train_model(
 ):
     if context.resources.mlflow.use_mlflow:
         mlflow.log_params(model_config.model_dump())
+        mlflow.log_metric("val_loss", random.random())
     else:
         print("production run, so no mlflow used.")

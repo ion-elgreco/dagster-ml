@@ -1,6 +1,8 @@
 from dagster import Definitions, define_asset_job
 from src.assets import train_model
-from src.grid_search_asset_generator import generate_grid_search_asset, generate_optuna_search_asset
+from src.search_asset_generator import (
+    generate_optuna_search_asset,
+)
 from src.resources import (
     ModelConfig,
     ParamSearchSpace,
@@ -11,10 +13,10 @@ from src.resources import (
 )
 from dagster_mlflow import end_mlflow_on_run_finished
 
-grid_search_assets = [
+optuna_search_assets = [
     generate_optuna_search_asset(job_name) for job_name in ["train_model_job"]
 ]
-all_assets = [train_model, *grid_search_assets]
+all_assets = [train_model, *optuna_search_assets]
 jobs = define_asset_job(
     "train_model_job", selection=[train_model], hooks={end_mlflow_on_run_finished}
 )

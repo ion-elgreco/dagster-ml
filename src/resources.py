@@ -6,6 +6,7 @@ from dagster import (
 from pydantic import Field
 from dagster_mlflow.resources import MlFlow
 import mlflow
+from optuna.study import StudyDirection
 
 
 class ModelConfig(ConfigurableResource):
@@ -34,6 +35,7 @@ class ParamSearchSpace(PermissiveConfig, ConfigurableResource):
 
     pass
 
+
 class OptunaParamSearchSpace(PermissiveConfig, ConfigurableResource):
     """Provide params in a list per ModelConfig. Pass this dict to
     resources: {"optuna_param_search_space": OptunaParamSearchSpace()} in defintions object, and
@@ -56,9 +58,13 @@ class OptunaParamSearchSpace(PermissiveConfig, ConfigurableResource):
 
     pass
 
+
 class OptunaConfig(ConfigurableResource):
     n_trials: int = Field(default=10)
     n_jobs: int = Field(default=20)
+    direction: StudyDirection
+    metric_name: str
+
 
 class MlflowExperimentConfig(ConfigurableResource):
     """Config for MLFlow experiment."""
