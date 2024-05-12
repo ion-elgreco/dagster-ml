@@ -68,21 +68,21 @@ def _generate_config_combinations(config_dict):
 import random
 def generate_optuna_search_asset(job_name: str) -> AssetsDefinition:
     @asset(name=f"{job_name}_optuna_search")
-    def grid_search_asset(
+    def fortuna_search_asset(
         context: AssetExecutionContext,
         optuna_param_search_space: OptunaParamSearchSpace,
         mlflow_experiment_config: MlflowExperimentConfig,
         optuna_config: OptunaConfig,
     ):
-        
         search_space = optuna_param_search_space.model_dump()
-        param_combinations = _generate_param_combinations(search_space)
-        model_config_combinations = _generate_config_combinations(param_combinations)
-
+        mlflow_config = mlflow_experiment_config.model_dump()
+        mlflow_config["use_mlflow"] = True
+        
         def objective(trial: Trial):
             client = DagsterGraphQLClient("localhost", port_number=3000)
-            
             resources_config = {}
+            resources_config["mlflow"] = {"config": mlflow_config}
+            
             for model_config, params_def in search_space.items():
                 resources_config[model_config] = {"config": {}}
                 for param, param_def in params_def.items():
@@ -97,23 +97,22 @@ def generate_optuna_search_asset(job_name: str) -> AssetsDefinition:
                             step=param_def.get('step', 1),
                             log=param_def.get('log', False)
                         )
-                                         
-        return random.random()
+                    elif isinstance(param_def['low'], float) and isinstance(param_def['high'], float):
+                        trial.suggest_float(
+                            model_param_log,
+                            low=param_def['low'],
+                            high=param_def['high'],
+                            step=param_def.get('step', 1),
+                            log=param_def.get('log', False)
+                        )
+            run_config = {"resources": resources_config}
+            submitted_job = client.submit_job_execution(job_name, run_config=run_config)
+            context.log.info("Submitted dagster jobs: %s", submitted_job)
+            return random.random()
         
         
-        
-        for combination in model_config_combinations:
-            mlflow_config = mlflow_experiment_config.model_dump()
-            mlflow_config["use_mlflow"] = True
-            combination["mlflow"] = {"config": mlflow_config}
-            run_config = {"resources": combination}
-            submitted_jobs.append(
-                client.submit_job_execution(job_name, run_config=run_config)
-            )
         
         study = optuna.create_study(direction="maximize")
         study.optimize(objective, n_trials=optuna_config.n_trials, n_jobs=optuna_config.n_jobs, show_progress_bar=True)
         
-        context.log.info("Submitted dagster jobs: %s", submitted_jobs)
-
-    return grid_search_asset
+    return fortuna_search_asset
