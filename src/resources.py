@@ -34,6 +34,31 @@ class ParamSearchSpace(PermissiveConfig, ConfigurableResource):
 
     pass
 
+class OptunaParamSearchSpace(PermissiveConfig, ConfigurableResource):
+    """Provide params in a list per ModelConfig. Pass this dict to
+    resources: {"optuna_param_search_space": OptunaParamSearchSpace()} in defintions object, and
+    below there is an example of how you configure the resource in launchpad.
+
+    Example:
+        optuna_param_search_space:
+            config:
+                model_1_config:
+                    param_a:
+                        low: 10
+                        high: 20
+                        step: 2
+                        log: true
+                    param_b: [10,20]
+                model_2_config:
+                    param_a: [10,20]
+                    param_b: [50]
+    """
+
+    pass
+
+class OptunaConfig(ConfigurableResource):
+    n_trials: int = Field(default=10)
+    n_jobs: int = Field(default=20)
 
 class MlflowExperimentConfig(ConfigurableResource):
     """Config for MLFlow experiment."""
